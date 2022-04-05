@@ -19,6 +19,9 @@ class _ImageViewState extends State<ImageView> {
 
   @override
   Widget build(BuildContext context) {
+    String downloadMessage = "Downloading...";
+    // var percentage = 0.0;
+
     return Scaffold(
       body: Stack(children: [
         Hero(
@@ -36,22 +39,57 @@ class _ImageViewState extends State<ImageView> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               GestureDetector(
-                onTap: (){
+                onTap: () async {
+
                   showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text("Alert test"),
-                        content: Text("Test content"),
-                        actions: [
-                          TextButton(onPressed: () {
-                            _save();
-                          }, child: Text("Yes")),
-                          TextButton(onPressed: () {
-                            Navigator.pop(context);
-                          }, child: Text("No")),
-                        ],
-                      ),
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text("Image will be saved in gallery"),
+                      content: Container(
+                        child: Text(downloadMessage),
+                      )
+                    ),
                   );
+                  //
+                  if(Platform.isAndroid){
+                    await _askPermission();
+                  }
+                  var response = await Dio().get(
+                    widget.imgUrl,
+                    options: Options(responseType: ResponseType.bytes),
+                    onReceiveProgress: (actualbytes, totalbytes){
+                      var percentage = actualbytes/totalbytes * 100;
+                      setState(() {
+                        downloadMessage = 'Downloading...${percentage.floor()} %';
+                      });
+                    }
+                  );
+                  final result =
+                      await ImageGallerySaver.saveImage(Uint8List.fromList(response.data));
+                  print(result);
+                  Navigator.pop(context);
+                  //
+
+                  // showDialog(
+                  //     context: context,
+                  //     builder: (context) => AlertDialog(
+                  //       title: Text("Alert test"),
+                  //       content: Text(downloadMessage ?? ''),
+                  //       //
+                  //
+                  //
+                  //
+                  //       //
+                  //       // actions: [
+                  //       //   TextButton(onPressed: () {
+                  //       //     _save();
+                  //       //   }, child: Text("Yes")),
+                  //       //   TextButton(onPressed: () {
+                  //       //     Navigator.pop(context);
+                  //       //   }, child: Text("No")),
+                  //       // ],
+                  //     ),
+                  // );
                   // _save();
                 },
                 child: Stack(
@@ -104,12 +142,21 @@ class _ImageViewState extends State<ImageView> {
   }
 
   _save() async {
+
+    String downloadMessage = "Downloading...";
+
     if(Platform.isAndroid){
       await _askPermission();
     }
     var response = await Dio().get(
         widget.imgUrl,
-        options: Options(responseType: ResponseType.bytes));
+        options: Options(responseType: ResponseType.bytes),
+        // onReceiveProgress: (actualbytes, totalbytes){
+        //   setState(() {
+        //     downloadMessage = actualbytes.toString();
+        //   });
+        // }
+    );
     final result =
     await ImageGallerySaver.saveImage(Uint8List.fromList(response.data));
     print(result);
