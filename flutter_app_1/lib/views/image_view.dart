@@ -16,7 +16,6 @@ class ImageView extends StatefulWidget {
 
 class _ImageViewState extends State<ImageView> {
 
-  var filePath;
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +37,22 @@ class _ImageViewState extends State<ImageView> {
             children: [
               GestureDetector(
                 onTap: (){
-                  _save();
-
+                  showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text("Alert test"),
+                        content: Text("Test content"),
+                        actions: [
+                          TextButton(onPressed: () {
+                            _save();
+                          }, child: Text("Yes")),
+                          TextButton(onPressed: () {
+                            Navigator.pop(context);
+                          }, child: Text("No")),
+                        ],
+                      ),
+                  );
+                  // _save();
                 },
                 child: Stack(
                   children: [

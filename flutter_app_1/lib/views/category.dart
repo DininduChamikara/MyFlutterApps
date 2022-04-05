@@ -54,6 +54,9 @@ class _CategorieState extends State<Categorie> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.white,
+          centerTitle: true,
           title: brandName(),
           elevation: 0.0,
         ),
