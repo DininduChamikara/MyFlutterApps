@@ -1,16 +1,25 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_1/views/image_view.dart';
 
+import 'package:cached_network_image/cached_network_image.dart';
+
 import '../model/wallpaper_model.dart';
 
-Widget brandName(){
-  return RichText(
-    text: TextSpan(
-      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-      children: const <TextSpan>[
-        TextSpan(text: 'WallArt', style: TextStyle(color: Colors.black87)),
-        TextSpan(text: 'Gallery', style: TextStyle(color: Colors.red)),
+Widget brandName() {
+  return Center(
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          "WallArt",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black87, fontFamily: 'Overpass'),
+        ),
+        Text(
+          "Gallery",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.red, fontFamily: 'Overpass'),
+        )
       ],
     ),
   );
@@ -34,6 +43,7 @@ Widget wallpapersList({required List <WallpaperModel> wallpapers, context}){
                   builder: (context) => ImageView(
                       imgUrl: wallpaper.src.portrait)
               ));
+
             },
             child: Hero(
               tag: wallpaper.src.portrait,

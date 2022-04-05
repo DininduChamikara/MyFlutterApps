@@ -13,7 +13,6 @@ class Search extends StatefulWidget {
   final String searchQuery;
   Search({required this.searchQuery});
 
-
   @override
   _SearchState createState() => _SearchState();
 }
@@ -57,6 +56,8 @@ class _SearchState extends State<Search> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
         title: brandName(),
         elevation: 0.0,
       ),
@@ -84,8 +85,16 @@ class _SearchState extends State<Search> {
 
                   GestureDetector(
 
+                    // onTap: (){
+                    //    getSearchWallpapers(searchController.text);
+                    // },
                     onTap: (){
-                      getSearchWallpapers(searchController.text);
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => Search(
+                            searchQuery: searchController.text,
+
+                          )
+                      ));
                     },
 
                     child: Container(
