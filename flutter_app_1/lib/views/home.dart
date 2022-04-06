@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_app_1/model/wallpaper_model.dart';
 import 'package:flutter_app_1/views/category.dart';
 import 'package:flutter_app_1/views/search.dart';
 import 'package:flutter_app_1/widgets/widget.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../data/data.dart';
 import '../model/categories_model.dart';
@@ -59,71 +61,94 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    DateTime timeBackPressed = DateTime.now();
+    return WillPopScope(
+      onWillPop: () async {
+        final difference = DateTime.now().difference(timeBackPressed);
+        final isExitWarning = difference >= Duration(seconds: 2);
+
+        timeBackPressed = DateTime.now();
+
+        if(isExitWarning){
+          final message = 'Press back again to exit';
+          Fluttertoast.showToast(msg: message, fontSize: 12);
+          return false;
+        }else{
+          Fluttertoast.cancel();
+          SystemNavigator.pop();
+          return true;
+        }
+
+        return false;
+      },
+
+      child: Scaffold(
         backgroundColor: Colors.white,
-        title: brandName(),
-        elevation: 0.0,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                  color: Color(0xfff5f8fd),
-                  borderRadius: BorderRadius.circular(30)
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              margin: EdgeInsets.symmetric(horizontal: 24),
-              child: Row(children: <Widget> [
-                Expanded(
-                  child: TextField(
-                    controller: searchController,
-                    decoration: InputDecoration(
-                        hintText: "search wallpaper",
-                        border: InputBorder.none
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.white,
+          title: brandName(),
+          elevation: 0.0,
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Container(
+                decoration: BoxDecoration(
+                    color: Color(0xfff5f8fd),
+                    borderRadius: BorderRadius.circular(30)
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                margin: EdgeInsets.symmetric(horizontal: 24),
+                child: Row(children: <Widget> [
+                  Expanded(
+                    child: TextField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                          hintText: "search wallpaper",
+                          border: InputBorder.none
+                      ),
                     ),
                   ),
-                ),
 
-                GestureDetector(
+                  GestureDetector(
 
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(
-                        builder: (context) => Search(
-                          searchQuery: searchController.text,
-                        )
-                    ));
-                  },
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => Search(
+                            searchQuery: searchController.text,
+                          )
+                      ));
+                    },
 
-                  child: Container(
-                    child: Icon(Icons.search),
-                  ) ,
-                )
-              ],),
-            ),
+                    child: Container(
+                      child: Icon(Icons.search),
+                    ) ,
+                  )
+                ],),
+              ),
 
-            SizedBox(height: 16,),
-            Container(
-              height: 80,
-              child: ListView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: 24),
-                  itemCount: categories.length,
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index){
+              SizedBox(height: 16,),
+              Container(
+                height: 80,
+                child: ListView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: 24),
+                    itemCount: categories.length,
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index){
 
-                    return CategoriesTile(
-                      title: categories[index].categoriesName,
-                      imgUrl: AssetImage(categories[index].imgUrl),
-                      imgUrlStr: categories[index].imgUrl,
-                    //  imgUrl: categories[index].imgUrl,
-                    );
-                  }),
-            ),
-            wallpapersList(wallpapers: wallpapers, context: context)
-          ],),),
+                      return CategoriesTile(
+                        title: categories[index].categoriesName,
+                        imgUrl: AssetImage(categories[index].imgUrl),
+                        imgUrlStr: categories[index].imgUrl,
+                        //  imgUrl: categories[index].imgUrl,
+                      );
+                    }),
+              ),
+              wallpapersList(wallpapers: wallpapers, context: context)
+            ],),),
+      ),
     );
   }
 }
