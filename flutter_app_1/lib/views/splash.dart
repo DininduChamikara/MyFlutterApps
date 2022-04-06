@@ -1,4 +1,8 @@
+import 'dart:async';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'home.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -11,6 +15,15 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> {
 
+  Future<bool> checkinternet() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if(connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -19,7 +32,14 @@ class _SplashState extends State<Splash> {
 
   _navigateToHome() async{
     await Future.delayed(Duration(milliseconds: 6000), (){});
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+
+    if(await checkinternet()){
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+    }else{
+      final message = 'No active internet connection found!';
+      Fluttertoast.showToast(msg: message, fontSize: 12);
+    }
+   // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
   }
 
   @override
@@ -63,7 +83,7 @@ class _SplashState extends State<Splash> {
 
                // CircularProgressIndicator(),
                 SpinKitSpinningLines(
-                  size: 120,
+                  size: 90,
                   color: Colors.white,
                 ),
 

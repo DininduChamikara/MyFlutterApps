@@ -8,6 +8,8 @@ import '../model/wallpaper_model.dart';
 import '../widgets/widget.dart';
 import 'package:http/http.dart' as http;
 
+import 'home.dart';
+
 class Search extends StatefulWidget {
 
   final String searchQuery;
@@ -54,62 +56,69 @@ class _SearchState extends State<Search> {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.white,
-        title: brandName(),
-        elevation: 0.0,
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                    color: Color(0xfff5f8fd),
-                    borderRadius: BorderRadius.circular(30)
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                margin: EdgeInsets.symmetric(horizontal: 24),
-                child: Row(children: <Widget> [
-                  Expanded(
-                    child: TextField(
-                      controller: searchController,
-                      decoration: InputDecoration(
-                          hintText: "search wallpaper",
-                          border: InputBorder.none
-                      ),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+        return true;
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            backgroundColor: Colors.white,
+            title: brandName(),
+            elevation: 0.0,
+          ),
+          body: SingleChildScrollView(
+            child: Container(
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xfff5f8fd),
+                        borderRadius: BorderRadius.circular(30)
                     ),
+                    padding: EdgeInsets.symmetric(horizontal: 24),
+                    margin: EdgeInsets.symmetric(horizontal: 24),
+                    child: Row(children: <Widget> [
+                      Expanded(
+                        child: TextField(
+                          controller: searchController,
+                          decoration: InputDecoration(
+                              hintText: "search wallpaper",
+                              border: InputBorder.none
+                          ),
+                        ),
+                      ),
+
+                      GestureDetector(
+
+                        // onTap: (){
+                        //    getSearchWallpapers(searchController.text);
+                        // },
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(
+                              builder: (context) => Search(
+                                searchQuery: searchController.text,
+
+                              )
+                          ));
+                        },
+
+                        child: Container(
+                          child: Icon(Icons.search),
+                        ) ,
+                      )
+                    ],),
                   ),
+                  SizedBox(
+                    height: 16,),
+                  wallpapersList(wallpapers: wallpapers, context: context)
+                ],),),
 
-                  GestureDetector(
+          )
 
-                    // onTap: (){
-                    //    getSearchWallpapers(searchController.text);
-                    // },
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => Search(
-                            searchQuery: searchController.text,
-
-                          )
-                      ));
-                    },
-
-                    child: Container(
-                      child: Icon(Icons.search),
-                    ) ,
-                  )
-                ],),
-              ),
-              SizedBox(
-                height: 16,),
-              wallpapersList(wallpapers: wallpapers, context: context)
-            ],),),
-
-      )
-
+      ),
     );
+
   }
 }
